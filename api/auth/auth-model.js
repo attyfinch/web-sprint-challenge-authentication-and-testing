@@ -12,5 +12,6 @@ async function insert(user) {
 }
 
 module.exports = {
-    insert
+    insert,
+    getUsername
 }

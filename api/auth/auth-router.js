@@ -2,15 +2,21 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const { usernameCheck, regBodyCheck } = require("./auth-middleware")
+
 const Auth = require('./auth-model');
 
+router.post('/register', regBodyCheck, usernameCheck, (req, res) => {
+  const { username, password } = req.body;
+  const hash = bcrypt.hashSync(req.body.password, 8)
 
-router.post('/register', (req, res) => {
-  Auth.insert(req.body)
-    .then(welcome => {
-      res.status(200).json(welcome)
-  })
-
+  Auth.insert({username, password: hash})
+    .then(user => {
+      res.status(200).json(user)
+    })
+    .catch(error => {
+      res.status(500).status({message: "something broke"})
+    })
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -38,7 +44,7 @@ router.post('/register', (req, res) => {
   */
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', regBodyCheck, (req, res) => {
   res.end('implement login, please!');
   /*
     IMPLEMENT
