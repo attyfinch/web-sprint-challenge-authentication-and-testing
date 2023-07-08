@@ -13,7 +13,7 @@ router.post('/register', regBodyCheck, usernameCheck, (req, res) => {
 
   Auth.insert({username, password: hash})
     .then(user => {
-      res.status(200).json(user)
+      res.status(201).json(user)
     })
     .catch(error => {
       res.status(500).status({message: "something broke"})
@@ -50,10 +50,7 @@ router.post('/login', regBodyCheck, (req, res, next) => {
   Auth.getUsername(username)
     .then(([user]) => {
       if (user && bcrypt.compareSync(password, user.password)) {
-        
         const token = tokenBuilder(user)
-
-        
         res.status(200).json({message: `welcome, ${username}`, token: token})
       } else {
         res.status(401).json({message: "Invalid credentials"})
